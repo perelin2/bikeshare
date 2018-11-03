@@ -183,6 +183,9 @@ def user_stats(df):
             print("{}: {}".format(user_type,type_cnt[user_type]))
 
     # Display counts of gender
+    if "Gender" not in df.columns:
+        print("No gender data available")
+    else:
         print("")
         print("User count per gender: ")
         gender_cnt=df.groupby(['Gender'])['Gender'].count()
@@ -191,6 +194,9 @@ def user_stats(df):
 
 
     # Display earliest, most recent, and most common year of birth
+    if "Birth year" not in df.columns:
+        print("No information about birth year available")
+    else:
         print("")
         eldest_user = df['Birth Year'].min()
         print("Birth year of oldest user: {}".format(eldest_user))
@@ -216,15 +222,20 @@ def print_rows(df):
     ''' calls get_rows() as long as the user types 'y' or there are rows left to display '''
 
     row_no = 0    # start with 1st row
+    chunk_len = 5
 
     # check if there are more rows left to print
     while row_no<len(df):
-        print(get_rows(df,row_no,5))
-        row_no += 5
+        chunk = get_rows(df,row_no,chunk_len)
+        i=0
+        while (i<len(chunk)):
+            print(chunk.iloc[i])
+            i+=1
+        row_no += chunk_len
     
     # ask to display more rows or inform that the end of the dataset has been reached
         if row_no < len(df):
-            show_rows = input('\nPrint 5 more rows? Enter y or n:').strip().lower()
+            show_rows = input('\nPrint {} more rows? Enter y or n:'.format(chunk_len)).strip().lower()
             if (show_rows != 'y'):
                 break
         else:
@@ -241,7 +252,7 @@ def main():
         trip_duration_stats(df)
         user_stats(df)
 
-        show_rows = input('\nWould you like to see the first 500 rows? Enter y or n: ').strip().lower()
+        show_rows = input('\nWould you like to see the first 5 rows? Enter y or n: ').strip().lower()
         if show_rows != 'y':
             break
         else:
